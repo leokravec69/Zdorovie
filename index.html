@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Силовые дома</title>
+<meta name="theme-color" content="#f5f1ea">
+<meta name="description" content="Домашние силовые: семь упражнений без железа, 30 минут три раза в неделю.">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon-180.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Силовые дома">
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700;800&display=swap" rel="stylesheet">
+<style id="css">
+:root{--bg:#f5f1ea;--card:#fffdf9;--ink:#23262b;--mute:#6b6f76;--line:#e6dfd3;--acc:#c4553b;--acc2:#2f6f6a;--warn:#c98a12;--bad:#b3261e;--ok:#2e7d4f}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;background:var(--bg);color:var(--ink);font-family:Manrope,system-ui,sans-serif;font-size:17px;line-height:1.45}
+#app{max-width:560px;margin:0 auto;padding:16px 16px 96px}
+h1{font-size:26px;font-weight:800;margin:4px 0 2px;letter-spacing:-.02em}
+h2{font-size:20px;font-weight:800;margin:0 0 8px;letter-spacing:-.01em}
+h3{font-size:17px;font-weight:700;margin:0 0 6px}
+p{margin:6px 0}
+.mute{color:var(--mute);font-size:15px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:16px;margin:12px 0}
+.row{display:flex;gap:10px;align-items:center}
+.grow{flex:1}
+.btn{display:block;width:100%;border:0;border-radius:14px;padding:16px;font:inherit;font-weight:700;font-size:18px;background:var(--acc);color:#fff;cursor:pointer;margin-top:10px}
+.btn:active{transform:scale(.99)}
+.btn.sec{background:#efe8dc;color:var(--ink)}
+.btn.teal{background:var(--acc2)}
+.btn.small{padding:10px 12px;font-size:15px;width:auto;display:inline-block;margin:0}
+.link{background:none;border:0;color:var(--mute);text-decoration:underline;font:inherit;font-size:15px;padding:8px 0;cursor:pointer}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:8px}
+.stat{background:#f3ece1;border-radius:12px;padding:10px;text-align:center}
+.stat b{display:block;font-size:24px;font-weight:800}
+.stat span{font-size:13px;color:var(--mute)}
+.note{border-radius:14px;padding:12px 14px;margin:10px 0;font-size:15px}
+.note.warn{background:#fbf0d9;border:1px solid #efd9a6}
+.note.bad{background:#fbe3e1;border:1px solid #f0b9b4}
+.note.ok{background:#e3f1e8;border:1px solid #b9dcc6}
+.note.info{background:#e6f0ef;border:1px solid #bfd8d5}
+.fig{width:100%;height:auto;display:block;background:#f3ece1;border-radius:14px}
+.figsm{width:96px;flex:none}
+.fields{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
+label.f{display:block;font-size:13px;color:var(--mute)}
+input[type=number]{width:100%;font:inherit;font-size:22px;font-weight:700;padding:10px;border:1px solid var(--line);border-radius:12px;background:#fff;color:var(--ink)}
+.pill{display:inline-block;background:#f3ece1;border-radius:999px;padding:4px 10px;font-size:13px;font-weight:700;color:var(--mute)}
+.pill.acc{background:var(--acc);color:#fff}
+.big{font-size:56px;font-weight:800;text-align:center;letter-spacing:-.03em;margin:8px 0;font-variant-numeric:tabular-nums}
+.dots{display:flex;gap:6px;justify-content:center;margin:8px 0}
+.dot{width:14px;height:14px;border-radius:50%;background:#e2d9ca}
+.dot.on{background:var(--acc)}
+.prog{height:6px;background:#e9e1d4;border-radius:6px;overflow:hidden;margin:6px 0 2px}
+.prog i{display:block;height:100%;background:var(--acc)}
+ol,ul{padding-left:20px;margin:6px 0}
+li{margin:4px 0}
+.lv{display:flex;align-items:flex-start;gap:10px;padding:10px;border:1px solid var(--line);border-radius:12px;margin:6px 0;cursor:pointer}
+.lv.on{border-color:var(--acc);background:#fbefe9}
+.lv input{margin-top:4px;accent-color:var(--acc)}
+.feel{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
+.feel button{border:1px solid var(--line);background:#fff;border-radius:14px;padding:14px 6px;font:inherit;font-weight:700;cursor:pointer}
+.feel button.on{border-color:var(--acc);background:#fbefe9}
+.tabs{position:fixed;left:0;right:0;bottom:0;background:var(--card);border-top:1px solid var(--line);display:flex;justify-content:center;padding-bottom:env(safe-area-inset-bottom)}
+.tabs div{display:flex;max-width:560px;width:100%}
+.tabs button{flex:1;border:0;background:none;font:inherit;font-size:13px;font-weight:700;color:var(--mute);padding:10px 4px 12px;cursor:pointer}
+.tabs button.on{color:var(--acc)}
+.tabs svg{display:block;margin:0 auto 2px;width:24px;height:24px}
+.entry{border-bottom:1px solid var(--line);padding:10px 0}
+.entry:last-child{border-bottom:0}
+.toast{position:fixed;left:50%;bottom:84px;transform:translateX(-50%);background:var(--ink);color:#fff;padding:10px 16px;border-radius:12px;font-size:14px;z-index:9;max-width:90%}
+.top{display:flex;justify-content:space-between;align-items:center}
+.ex-list .item{display:flex;gap:12px;align-items:center;padding:8px 0;border-bottom:1px solid var(--line)}
+.ex-list .item:last-child{border-bottom:0}
+@media (prefers-reduced-motion: reduce){.fig{animation:none}}
+
+/* PWA: безопасные зоны iPhone (вырез и домашний индикатор) */
+@supports (padding: env(safe-area-inset-top)) {
+  body { padding-top: env(safe-area-inset-top); }
+  .toast { bottom: calc(84px + env(safe-area-inset-bottom)); }
+}
+@media (display-mode: standalone) {
+  body { overscroll-behavior-y: contain; }
+}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<script type="application/json" id="state">{"v":1,"startDate":null,"levels":{},"sessions":[],"savedAt":0}</script>
+<script id="appjs">
+(function(){
+"use strict";
+var SELF_JS = document.currentScript.textContent;
+var CSS = document.getElementById('css').textContent;
+var KEY = 'lk-strength-v1';
+
+/* ---------- данные ---------- */
+var EX = [
+ {id:'squat', name:'Вставание со стула', target:'8–12 повторов', kind:'reps',
+  why:'Ноги и ягодицы — самые большие мышцы тела. Они держат силу вставать, ходить и подниматься по лестнице.',
+  how:['Сядьте на край устойчивого стула без колёсиков, стопы на ширине плеч.','Чуть наклоните корпус вперёд и встаньте, толкаясь пятками.','Опускайтесь медленно, за 2–3 секунды. Выдох — когда встаёте.'],
+  avoid:'Колени не сводите внутрь — они смотрят туда же, куда носки. Не плюхайтесь на стул.',
+  levels:['С опорой руками о колени','Без помощи рук','Медленно вниз — 3 секунды','Пауза 2 секунды над стулом, не садясь']},
+ {id:'pushup', name:'Отжимания от стены', target:'10–15 повторов', kind:'reps',
+  why:'Грудь, плечи и руки. Тело работает как одна прямая линия, заодно включается пресс.',
+  how:['Встаньте лицом к стене на расстоянии вытянутых рук.','Ладони на стене на уровне груди, чуть шире плеч.','Сгибайте руки, приближая грудь к стене, и выпрямляйте. Выдох — от стены.'],
+  avoid:'Не прогибайтесь в пояснице и не выставляйте таз назад — тело прямое от пяток до головы.',
+  levels:['От стены, ноги близко','От стены, ноги дальше','От столешницы кухни','Медленно вниз — 3 секунды']},
+ {id:'wallrow', name:'Отжимание локтями от стены (спиной)', target:'10–12 повторов', kind:'reps',
+  why:'Замена тяги без ленты: работают мышцы спины между лопатками — против сутулости за креслом.',
+  how:['Встаньте спиной к стене, пятки в 20–30 см от неё.','Согните руки, локти прижмите к стене на уровне чуть ниже плеч.','Давите локтями в стену и отталкивайте корпус вперёд, сводя лопатки. Медленно вернитесь.'],
+  avoid:'Не поднимайте плечи к ушам. Голову не запрокидывайте.',
+  levels:['Ноги близко к стене','Ноги дальше от стены','Пауза 3 секунды в верхней точке']},
+ {id:'bridge', name:'Ягодичный мост на кровати', target:'10–12 повторов', kind:'reps',
+  why:'Ягодицы и задняя поверхность бедра. Разгружает поясницу, которая устаёт от работы стоя.',
+  how:['Лягте на спину на кровать, согните колени, стопы стоят на матрасе.','Руки вдоль тела. На выдохе поднимите таз, сжав ягодицы.','Задержитесь на 2 секунды и медленно опуститесь.'],
+  avoid:'Не выгибайте поясницу вверху — поднимайтесь до прямой линии от колен до плеч.',
+  levels:['Обычный, пауза 2 секунды','Пауза 4 секунды вверху','Медленно вниз — 3 секунды']},
+ {id:'arms', name:'Подъём рук над головой (W → Y)', target:'10–12 повторов', kind:'reps', sets:2,
+  why:'Плечи и верх спины, раскрытие грудной клетки. Хорошо для осанки и плеч парикмахера.',
+  how:['Встаньте прямо, локти согнуты у корпуса, кисти на уровне плеч — буква W.','Поднимите руки вверх и чуть в стороны — буква Y, сводя лопатки.','Медленно вернитесь в W.'],
+  avoid:'Не прогибайтесь в пояснице, живот слегка подтянут.',
+  levels:['Без веса','С бутылками воды 0,5 л','С бутылками воды 1 л']},
+ {id:'calf', name:'Подъёмы на носки', target:'15 повторов', kind:'reps', sets:2,
+  why:'Икры — «второе сердце»: помогают крови возвращаться от ног. Полезно, если весь день на ногах.',
+  how:['Встаньте боком или лицом к стене, держитесь рукой.','Поднимитесь на носки как можно выше.','Медленно опуститесь на пятки.'],
+  avoid:'Не раскачивайтесь, движение плавное.',
+  levels:['Двумя ногами, держась','Пауза 2 секунды вверху','На одной ноге, держась']},
+ {id:'plank', name:'Планка у стола', target:'удержание', kind:'hold', sets:2,
+  why:'Мышцы корпуса и пресса держат спину. Безопасная версия планки — без пола.',
+  how:['Упритесь руками в край устойчивого стола, отойдите ногами назад.','Тело — прямая линия от пяток до головы.','Держите положение и спокойно дышите, не задерживая дыхание.'],
+  avoid:'Таз не проваливается и не задирается вверх. Не задерживайте дыхание.',
+  levels:['Упор о стену — 15 секунд','Упор о стол — 20 секунд','Упор о стол — 30 секунд','Упор о спинку дивана — 30 секунд'],
+  holdSec:[15,20,30,30]}
+];
+var DEFLEVEL = {squat:1,pushup:0,wallrow:0,bridge:0,arms:0,calf:0,plank:1};
+
+var POSES = {
+ squat:{per:4.2, prop:'chair', hl:['thigh','shin'],
+  A:{h:[88,64],s:[84,84],e:[102,100],a:[118,96],p:[80,124],k:[116,124],f:[114,180],t:[128,183]},
+  B:{h:[110,44],s:[108,64],e:[122,84],a:[138,80],p:[106,112],k:[112,148],f:[114,180],t:[128,183]}},
+ pushup:{per:3.6, prop:'wallR', hl:['upper','fore'],
+  A:{h:[142,62],s:[132,80],e:[151,83],a:[170,84],p:[106,120],k:[88,150],f:[70,180],t:[82,183]},
+  B:{h:[157,66],s:[146,82],e:[156,98],a:[170,86],p:[114,120],k:[92,150],f:[70,180],t:[82,183]}},
+ wallrow:{per:3.6, prop:'wallL', hl:['upper','torso'],
+  A:{h:[52,58],s:[58,76],e:[42,92],a:[54,72],p:[72,118],k:[80,150],f:[86,180],t:[100,183]},
+  B:{h:[62,58],s:[63,76],e:[42,92],a:[52,72],p:[78,118],k:[83,150],f:[86,180],t:[100,183]}},
+ bridge:{per:4.2, prop:'bed', hl:['thigh','torso'],
+  A:{h:[38,140],s:[58,145],e:[80,147],a:[100,148],p:[112,146],k:[142,120],f:[160,144],t:[174,148]},
+  B:{h:[38,140],s:[58,145],e:[80,147],a:[100,148],p:[112,120],k:[146,114],f:[160,144],t:[174,148]}},
+ arms:{per:3.6, prop:'none', hl:['upper','fore'],
+  A:{h:[100,44],s:[100,64],e:[94,92],a:[102,66],p:[100,112],k:[101,148],f:[100,180],t:[114,183]},
+  B:{h:[100,44],s:[100,64],e:[106,38],a:[110,12],p:[100,112],k:[101,148],f:[100,180],t:[114,183]}},
+ calf:{per:3, prop:'wallR2', hl:['shin'],
+  A:{h:[110,46],s:[110,66],e:[132,82],a:[158,84],p:[108,114],k:[108,148],f:[106,178],t:[122,183]},
+  B:{h:[110,36],s:[110,56],e:[132,72],a:[158,76],p:[108,104],k:[108,138],f:[110,168],t:[122,183]}},
+ plank:{per:3, prop:'table', hl:['torso'],
+  A:{h:[150,74],s:[134,84],e:[140,96],a:[146,106],p:[89,130],k:[65,154],f:[40,180],t:[52,183]},
+  B:{h:[150,73],s:[134,83],e:[140,96],a:[146,106],p:[89,128],k:[65,154],f:[40,180],t:[52,183]}}
+};
+
+/* ---------- состояние ---------- */
+var state;
+try { state = JSON.parse(document.getElementById('state').textContent); } catch(e){ state = {v:1,startDate:null,levels:{},sessions:[],savedAt:0}; }
+try { var loc = JSON.parse(localStorage.getItem(KEY)||'null'); if (loc && loc.savedAt > (state.savedAt||0)) state = loc; } catch(e){}
+state.levels = state.levels || {}; state.sessions = state.sessions || [];
+
+var artP = Promise.resolve(null);
+try { if (window.claude && typeof window.claude.use === 'function') artP = window.claude.use('artifact').catch(function(){return null;}); } catch(e){}
+
+function esc(s){return String(s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
+function buildDoc(){
+  var json = JSON.stringify(state).replace(/</g,'\\u003c');
+  return '<!DOCTYPE html>\n<html lang="ru">\n<head>\n<meta charset="utf-8">\n<meta name="viewport" content="width=device-width, initial-scale=1">\n<title>Силовые дома</title>\n<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700;800&display=swap" rel="stylesheet">\n<style id="css">'+CSS+'</style>\n</head>\n<body>\n<div id="app"></div>\n<script type="application/json" id="state">'+json+'<\/script>\n<script id="appjs">'+SELF_JS+'<\/script>\n</body>\n</html>\n';
+}
+var saveTimer=null;
+function persist(delay){
+  state.savedAt = Date.now();
+  try { localStorage.setItem(KEY, JSON.stringify(state)); } catch(e){}
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(function(){
+    artP.then(function(art){
+      if(!art){ toast('Сохранено на этом устройстве'); return; }
+      art.publish(buildDoc()).catch(function(err){
+        var code = err && (err.code||err.name||'');
+        if (String(code).indexOf('conflict')>=0) return;
+        toast('Сохранено только на этом устройстве');
+      });
+    });
+  }, delay||0);
+}
+function toast(msg){
+  var t=document.createElement('div'); t.className='toast'; t.textContent=msg; document.body.appendChild(t);
+  setTimeout(function(){t.remove();},2600);
+}
+
+/* ---------- даты ---------- */
+function todayStr(){var d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
+function daysBetween(a,b){return Math.round((new Date(b+'T12:00')-new Date(a+'T12:00'))/864e5);}
+function fmtDate(s){var m=['янв','фев','мар','апр','мая','июн','июл','авг','сен','окт','ноя','дек'];var d=new Date(s+'T12:00');return d.getDate()+' '+m[d.getMonth()];}
+function weekNo(){ if(!state.startDate) return 1; return Math.floor(daysBetween(state.startDate,todayStr())/7)+1; }
+function setsFor(ex){ return ex.sets || (weekNo()<=2?2:3); }
+function lvl(id){ return state.levels[id]!=null ? state.levels[id] : DEFLEVEL[id]; }
+function workouts(){ return state.sessions.filter(function(s){return s.kind==='workout';}); }
+
+/* ---------- фигуры ---------- */
+function propSVG(p){
+  var c='stroke="#b9ad9a" stroke-width="5" stroke-linecap="round" fill="none"';
+  switch(p){
+   case 'chair': return '<g '+c+'><line x1="52" y1="78" x2="52" y2="183"/><line x1="50" y1="131" x2="100" y2="131"/><line x1="97" y1="131" x2="97" y2="183"/></g>';
+   case 'wallR': return '<rect x="172" y="14" width="18" height="170" fill="#ddd2c1"/>';
+   case 'wallR2': return '<rect x="160" y="14" width="18" height="170" fill="#ddd2c1"/>';
+   case 'wallL': return '<rect x="14" y="14" width="22" height="170" fill="#ddd2c1"/>';
+   case 'bed': return '<rect x="16" y="151" width="176" height="14" rx="5" fill="#ddd2c1"/><g '+c+'><line x1="24" y1="165" x2="24" y2="183"/><line x1="184" y1="165" x2="184" y2="183"/></g>';
+   case 'table': return '<rect x="126" y="107" width="68" height="8" rx="3" fill="#cdbfa9"/><g '+c+'><line x1="134" y1="115" x2="134" y2="183"/><line x1="186" y1="115" x2="186" y2="183"/></g>';
+   default: return '';
+  }
+}
+var SEG = [['neck','s','h',10],['torso','s','p',17],['thigh','p','k',13],['shin','k','f',11],['foot','f','t',8],['upper','s','e',10],['fore','e','a',9]];
+function figSVG(id, cls){
+  var P=POSES[id], out='<svg class="fig '+(cls||'')+'" data-ex="'+id+'" viewBox="0 0 200 200" aria-hidden="true">';
+  out+='<line x1="8" y1="184" x2="192" y2="184" stroke="#cfc4b2" stroke-width="3"/>'+propSVG(P.prop);
+  out+='<g stroke-linecap="round" fill="none">';
+  SEG.forEach(function(sg){ var col = P.hl.indexOf(sg[0])>=0 ? '#c4553b' : '#23262b'; out+='<line data-s="'+sg[0]+'" stroke="'+col+'" stroke-width="'+sg[3]+'"/>'; });
+  out+='</g><circle data-s="head" r="12" fill="#23262b"/></svg>';
+  return out;
+}
+var reduce = false; try{ reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches; }catch(e){}
+function drawFig(svg, ts){
+  var id=svg.getAttribute('data-ex'), P=POSES[id]; if(!P) return;
+  if(!svg._els){ svg._els={}; svg.querySelectorAll('[data-s]').forEach(function(el){svg._els[el.getAttribute('data-s')]=el;}); }
+  var t = reduce ? 1 : 0.5-0.5*Math.cos(2*Math.PI*((ts/1000)%P.per)/P.per);
+  var pt={}; for(var k in P.A){ pt[k]=[P.A[k][0]+(P.B[k][0]-P.A[k][0])*t, P.A[k][1]+(P.B[k][1]-P.A[k][1])*t]; }
+  SEG.forEach(function(sg){ var el=svg._els[sg[0]]; el.setAttribute('x1',pt[sg[1]][0]); el.setAttribute('y1',pt[sg[1]][1]); el.setAttribute('x2',pt[sg[2]][0]); el.setAttribute('y2',pt[sg[2]][1]); });
+  var hd=svg._els.head; hd.setAttribute('cx',pt.h[0]); hd.setAttribute('cy',pt.h[1]);
+}
+function loop(ts){ document.querySelectorAll('svg.fig').forEach(function(s){drawFig(s,ts);}); requestAnimationFrame(loop); }
+
+/* ---------- звук ---------- */
+var actx=null;
+function unlockAudio(){ try{ actx = actx || new (window.AudioContext||window.webkitAudioContext)(); if(actx.state==='suspended') actx.resume(); }catch(e){} }
+function beep(n){ try{ if(!actx) return; for(var i=0;i<(n||2);i++){ var o=actx.createOscillator(), g=actx.createGain(), t0=actx.currentTime+i*0.32; o.frequency.value=880; o.connect(g); g.connect(actx.destination); g.gain.setValueAtTime(0.25,t0); g.gain.exponentialRampToValueAtTime(0.001,t0+0.28); o.start(t0); o.stop(t0+0.3);} }catch(e){} try{navigator.vibrate && navigator.vibrate([200,100,200]);}catch(e){} }
+
+/* ---------- навигация ---------- */
+var tab='home', W=null, timer=null, restSec=90;
+function stopTimer(){ if(timer){clearInterval(timer); timer=null;} }
+function go(t){ stopTimer(); tab=t; render(); window.scrollTo(0,0); }
+var app=document.getElementById('app');
+
+function tabsHTML(){
+  var items=[['home','Сегодня','M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z'],['lib','Упражнения','M6 6v12M18 6v12M3 9v6M21 9v6M6 12h12'],['log','Дневник','M5 3h11l3 3v15H5zM9 9h7M9 13h7M9 17h4']];
+  return '<nav class="tabs"><div>'+items.map(function(i){return '<button data-tab="'+i[0]+'" class="'+(tab===i[0]?'on':'')+'"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="'+i[2]+'"/></svg>'+i[1]+'</button>';}).join('')+'</div></nav>';
+}
+
+function render(){
+  var h='';
+  if (W) h = workoutHTML();
+  else if (tab==='home') h = homeHTML();
+  else if (tab==='lib') h = libHTML();
+  else if (tab==='log') h = logHTML();
+  app.innerHTML = h + (W ? '' : tabsHTML());
+  bind();
+}
+
+/* ---------- экран «Сегодня» ---------- */
+function homeHTML(){
+  var ws=workouts(), today=todayStr();
+  var last = ws.length ? ws[ws.length-1] : null;
+  var weekCount = ws.filter(function(s){return daysBetween(s.date,today)<7;}).length;
+  var advice, canTrain=true;
+  if (last && last.date===today){ advice='Тренировка сегодня уже сделана. Следующая — послезавтра.'; canTrain=false; }
+  else if (last && daysBetween(last.date,today)===1){ advice='Вчера была тренировка — сегодня мышцам нужен отдых. Лучше прогулка 20–30 минут.'; }
+  else if (!last){ advice='Первая тренировка: возьмите лёгкий темп, главное — освоить технику.'; }
+  else { advice='Отличный день для тренировки.'; }
+  var easy = ws.slice(-2); var hint = easy.length===2 && easy.every(function(s){return s.feel==='easy';});
+  var h='<div class="top"><div><div class="mute">Домашние силовые</div><h1>Сегодня</h1></div><span class="pill acc">Неделя '+weekNo()+'</span></div>';
+  h+='<div class="card"><p>'+advice+'</p>';
+  h+='<div class="stats"><div class="stat"><b>'+weekCount+'/3</b><span>за 7 дней</span></div><div class="stat"><b>'+ws.length+'</b><span>всего</span></div><div class="stat"><b>'+(weekNo()<=2?2:3)+'</b><span>подхода</span></div></div>';
+  h+='<button class="btn" data-act="start">'+(canTrain?'Начать тренировку':'Всё равно начать')+'</button>';
+  h+='<button class="btn sec" data-act="walk">Отметить прогулку</button></div>';
+  if (hint) h+='<div class="note ok"><b>Пора усложнить.</b> Две тренировки подряд дались легко — во вкладке «Упражнения» выберите следующий уровень там, где было проще всего.</div>';
+  h+='<div class="card"><h3>Программа · ~30 минут</h3><div class="ex-list">';
+  EX.forEach(function(ex){ h+='<div class="item">'+figSVG(ex.id,'figsm')+'<div class="grow"><b>'+ex.name+'</b><div class="mute">'+setsFor(ex)+' × '+(ex.kind==='hold'?(ex.holdSec[lvl(ex.id)]+' сек'):ex.target)+'</div></div></div>'; });
+  h+='</div><p class="mute">3 раза в неделю, не два дня подряд: например пн, ср, пт.</p></div>';
+    return h;
+}
+
+/* ---------- тренировка ---------- */
+function startWorkout(){ unlockAudio(); W={step:'bp', i:0, set:1, bp:null, feel:null, done:{}}; render(); window.scrollTo(0,0); }
+function bpLevel(s,d){ if(s>=180||d>=110) return 'bad'; if(s>=160||d>=100) return 'warn'; return 'ok'; }
+
+function workoutHTML(){
+  var total = EX.length+2, pos = W.step==='bp'?0: W.step==='warm'?1 : (W.step==='cool'||W.step==='finish')? total : W.i+2;
+  var h='<div class="top"><button class="link" data-act="quit">✕ Выйти</button><span class="mute">'+Math.min(pos,total)+' / '+total+'</span></div><div class="prog"><i style="width:'+Math.round(100*Math.min(pos,total)/total)+'%"></i></div>';
+  if (W.step==='bp'){
+    h+='<h1>Давление</h1><p class="mute">Измерьте сидя, после 5 минут покоя.</p><div class="card"><div class="fields">';
+    h+='<label class="f">Верхнее<input type="number" inputmode="numeric" id="bs" placeholder="130"></label><label class="f">Нижнее<input type="number" inputmode="numeric" id="bd" placeholder="85"></label><label class="f">Пульс<input type="number" inputmode="numeric" id="bp" placeholder="75"></label></div>';
+    h+='<div id="bpmsg"></div><button class="btn" data-act="bpok">Дальше</button><button class="link" data-act="bpskip">Пропустить — тонометра нет под рукой</button></div>';
+  }
+  else if (W.step==='warm'){
+    h+='<h1>Разминка · 5 минут</h1><div class="card"><ol><li>Ходьба на месте — 1,5 минуты</li><li>Круги плечами вперёд и назад — по 10</li><li>Повороты головы — плавно, по 5 в каждую сторону</li><li>Подъёмы коленей, держась за спинку стула — по 10</li><li>Повороты корпуса стоя — по 10</li></ol>';
+    h+='<div class="big" id="clock">5:00</div><button class="btn teal" data-act="warmtimer">Запустить таймер</button><button class="btn" data-act="towork">К упражнениям</button></div>';
+  }
+  else if (W.step==='ex' || W.step==='rest'){
+    var ex=EX[W.i], n=setsFor(ex), L=lvl(ex.id);
+    h+='<div class="mute">Упражнение '+(W.i+1)+' из '+EX.length+'</div><h1>'+ex.name+'</h1>';
+    h+='<div class="card" style="padding:10px">'+figSVG(ex.id)+'</div>';
+    h+='<div class="dots">'; for(var k=1;k<=n;k++) h+='<span class="dot '+(k<W.set||(W.step==='rest'&&k===W.set-0&&false)?'on':'')+'"></span>'; h+='</div>';
+    if (W.step==='rest'){
+      h+='<div class="card" style="text-align:center"><div class="mute">Отдых перед подходом '+W.set+' из '+n+'</div><div class="big" id="clock">'+fmtSec(restSec)+'</div><p class="mute">Подышите спокойно. Можно пройтись по комнате.</p><button class="btn sec" data-act="skiprest">Пропустить отдых</button></div>';
+    } else {
+      h+='<div class="card"><div class="row"><div class="grow"><b>Подход '+W.set+' из '+n+'</b><div class="mute">'+(ex.kind==='hold'?('Удержание '+ex.holdSec[L]+' секунд'):ex.target)+' · уровень: '+esc(ex.levels[L])+'</div></div></div>';
+      if (ex.kind==='hold'){ h+='<div class="big" id="clock">'+fmtSec(ex.holdSec[L])+'</div><button class="btn teal" data-act="hold">Старт удержания</button>'; }
+      h+='<button class="btn" data-act="setdone">Подход сделан ✓</button><button class="link" data-act="skipex">Пропустить упражнение</button></div>';
+      h+='<div class="card"><h3>Как делать</h3><ol>'+ex.how.map(function(x){return '<li>'+x+'</li>';}).join('')+'</ol><div class="note warn" style="margin-bottom:0"><b>Следите:</b> '+ex.avoid+'</div></div>';
+      h+='<div class="card"><div class="row"><span class="mute grow">Отдых между подходами</span>'+[60,90,120].map(function(s){return '<button class="btn small '+(restSec===s?'':'sec')+'" data-rest="'+s+'">'+s+' с</button>';}).join(' ')+'</div></div>';
+    }
+  }
+  else if (W.step==='cool'){
+    h+='<h1>Заминка · 5 минут</h1><div class="card"><ol><li>Спокойная ходьба по комнате — 2 минуты</li><li>Растяжка груди в дверном проёме — 20 секунд</li><li>Растяжка задней поверхности бедра: пятка на низкой опоре, лёгкий наклон — по 20 секунд</li><li>Растяжка икр у стены — по 20 секунд</li></ol><p class="mute">Вставайте и меняйте положение медленно, без резких движений.</p><button class="btn" data-act="tofinish">Готово</button></div>';
+  }
+  else if (W.step==='finish'){
+    h+='<h1>Тренировка сделана 💪</h1><div class="card"><h3>Как далась?</h3><div class="feel">'+[['easy','Легко'],['ok','Нормально'],['hard','Тяжело']].map(function(f){return '<button data-feel="'+f[0]+'" class="'+(W.feel===f[0]?'on':'')+'">'+f[1]+'</button>';}).join('')+'</div>';
+    h+='<button class="btn" data-act="save">Сохранить в дневник</button></div>';
+    h+='<div class="note info">Лёгкая боль в мышцах завтра — нормально. Боль в суставах — повод взять уровень полегче.</div>';
+  }
+  return h;
+}
+function fmtSec(s){ return Math.floor(s/60)+':'+String(s%60).padStart(2,'0'); }
+function countdown(sec, onEnd){
+  stopTimer(); var left=sec, el=document.getElementById('clock'); if(el) el.textContent=fmtSec(left);
+  timer=setInterval(function(){ left--; var c=document.getElementById('clock'); if(c) c.textContent=fmtSec(Math.max(left,0)); if(left<=0){ stopTimer(); beep(2); onEnd&&onEnd(); } },1000);
+}
+function nextAfterSet(){
+  var ex=EX[W.i], n=setsFor(ex);
+  W.done[ex.id]=(W.done[ex.id]||0)+1;
+  if (W.set<n){ W.set++; W.step='rest'; render(); countdown(restSec,function(){ W.step='ex'; render(); }); }
+  else nextEx();
+}
+function nextEx(){ stopTimer(); W.set=1; if(W.i<EX.length-1){ W.i++; W.step='ex'; } else W.step='cool'; render(); window.scrollTo(0,0); }
+
+/* ---------- упражнения ---------- */
+function libHTML(){
+  var h='<h1>Упражнения</h1><p class="mute">Выберите уровень. Усложняйте, когда все подходы даются легко и техника не страдает.</p>';
+  EX.forEach(function(ex){
+    var L=lvl(ex.id);
+    h+='<div class="card"><h2>'+ex.name+'</h2>'+figSVG(ex.id)+'<p style="margin-top:10px">'+ex.why+'</p><h3>Как делать</h3><ol>'+ex.how.map(function(x){return '<li>'+x+'</li>';}).join('')+'</ol><div class="note warn"><b>Следите:</b> '+ex.avoid+'</div><h3>Уровень</h3>';
+    ex.levels.forEach(function(lv,i){ h+='<label class="lv '+(i===L?'on':'')+'"><input type="radio" name="lv-'+ex.id+'" data-lvl="'+ex.id+'" value="'+i+'" '+(i===L?'checked':'')+'><span>'+(i+1)+'. '+esc(lv)+'</span></label>'; });
+    h+='</div>';
+  });
+  h+='<div class="note info">Когда купите эспандер-ленты, добавим тягу ленты к поясу и разведение ленты перед грудью.</div>';
+  return h;
+}
+
+/* ---------- дневник ---------- */
+function logHTML(){
+  var h='<h1>Дневник</h1><div class="card"><h3>Записать давление</h3><div class="fields"><label class="f">Верхнее<input type="number" inputmode="numeric" id="ls"></label><label class="f">Нижнее<input type="number" inputmode="numeric" id="ld"></label><label class="f">Пульс<input type="number" inputmode="numeric" id="lp"></label></div><button class="btn teal" data-act="logbp">Сохранить</button></div>';
+  var list=state.sessions.slice().reverse();
+  h+='<div class="card">';
+  if(!list.length) h+='<p class="mute">Пока пусто. Здесь появятся тренировки, прогулки и давление.</p>';
+  var names={workout:'Тренировка',walk:'Прогулка',bp:'Давление'}, feels={easy:'легко',ok:'нормально',hard:'тяжело'};
+  list.forEach(function(s,idx){
+    var realIdx = state.sessions.length-1-idx;
+    h+='<div class="entry"><div class="row"><b class="grow">'+fmtDate(s.date)+' · '+names[s.kind]+'</b>'+(s.feel?'<span class="pill">'+feels[s.feel]+'</span>':'')+'</div>';
+    if(s.bp) h+='<div class="mute">Давление '+s.bp.s+'/'+s.bp.d+(s.bp.p?' · пульс '+s.bp.p:'')+'</div>';
+    if(s.kind==='workout'){ var c=0; for(var k in s.done) c+=s.done[k]; h+='<div class="mute">Подходов: '+c+'</div>'; }
+    h+='<button class="link" data-del="'+realIdx+'">удалить</button></div>';
+  });
+  h+='</div>';
+  return h;
+}
+
+/* ---------- обработчики ---------- */
+function num(id){ var el=document.getElementById(id); var v=el?parseInt(el.value,10):NaN; return isNaN(v)?null:v; }
+function bind(){
+  app.querySelectorAll('[data-tab]').forEach(function(b){ b.onclick=function(){ go(b.getAttribute('data-tab')); }; });
+  app.querySelectorAll('[data-rest]').forEach(function(b){ b.onclick=function(){ restSec=+b.getAttribute('data-rest'); render(); }; });
+  app.querySelectorAll('[data-feel]').forEach(function(b){ b.onclick=function(){ W.feel=b.getAttribute('data-feel'); render(); }; });
+  app.querySelectorAll('[data-lvl]').forEach(function(r){ r.onchange=function(){ state.levels[r.getAttribute('data-lvl')]=+r.value; render(); persist(1500); }; });
+  app.querySelectorAll('[data-del]').forEach(function(b){ b.onclick=function(){
+    if(b.getAttribute('data-armed')){ state.sessions.splice(+b.getAttribute('data-del'),1); render(); persist(); }
+    else { b.setAttribute('data-armed','1'); b.textContent='точно удалить?'; b.style.color='#b3261e'; }
+  }; });
+  app.querySelectorAll('[data-act]').forEach(function(b){ b.onclick=function(){ act(b.getAttribute('data-act'), b); }; });
+  ['bs','bd'].forEach(function(id){ var el=document.getElementById(id); if(el) el.oninput=bpPreview; });
+}
+function bpPreview(){
+  var s=num('bs'), d=num('bd'), box=document.getElementById('bpmsg'); if(!box) return;
+  if(s==null||d==null){ box.innerHTML=''; return; }
+  var lv=bpLevel(s,d);
+  box.innerHTML = lv==='ok' ? '<div class="note ok">Давление в допустимых пределах — можно тренироваться.</div>' :
+    lv==='warn' ? '<div class="note warn"><b>Давление повышено.</b> Сегодня лучше только прогулка 20–30 минут.</div>' :
+    '<div class="note bad"><b>Давление высокое — тренировку не делать.</b> Отдохните и перемерьте через 20–30 минут. Головная боль, боль в груди, нарушение зрения или речи — скорая 103 / 112.</div>';
+}
+function act(a, b){
+  if(a==='start') return startWorkout();
+  if(a==='walk'){ state.sessions.push({date:todayStr(),kind:'walk'}); render(); toast('Прогулка отмечена'); return persist(); }
+  if(a==='quit'){ stopTimer(); if(W && W.step!=='bp' && W.step!=='warm' && Object.keys(W.done).length){ W.step='finish'; render(); return; } W=null; render(); return; }
+  if(a==='bpskip'){ W.step='warm'; render(); return; }
+  if(a==='bpok'){
+    var s=num('bs'), d=num('bd'), p=num('bp');
+    if(s==null||d==null){ toast('Введите верхнее и нижнее давление или нажмите «Пропустить»'); return; }
+    W.bp={s:s,d:d,p:p}; var lv=bpLevel(s,d);
+    if(lv!=='ok'){
+      bpPreview();
+      var box=document.getElementById('bpmsg');
+      box.innerHTML+='<button class="btn teal" data-act="bpwalk">Отметить прогулку вместо тренировки</button>'+(lv==='warn'?'<button class="link" data-act="bpforce">Это моё обычное давление — продолжить</button>':'');
+      box.querySelectorAll('[data-act]').forEach(function(x){ x.onclick=function(){ act(x.getAttribute('data-act')); }; });
+      b.style.display='none'; return;
+    }
+    W.step='warm'; render(); return;
+  }
+  if(a==='bpwalk'){ state.sessions.push({date:todayStr(),kind:'walk',bp:W.bp}); W=null; render(); toast('Прогулка и давление записаны'); return persist(); }
+  if(a==='bpforce'){ W.step='warm'; render(); return; }
+  if(a==='warmtimer'){ unlockAudio(); countdown(300); b.style.display='none'; return; }
+  if(a==='towork'){ stopTimer(); W.step='ex'; W.i=0; W.set=1; render(); window.scrollTo(0,0); return; }
+  if(a==='hold'){ unlockAudio(); var ex=EX[W.i]; b.style.display='none'; countdown(ex.holdSec[lvl(ex.id)], function(){ nextAfterSet(); }); return; }
+  if(a==='setdone'){ unlockAudio(); stopTimer(); nextAfterSet(); return; }
+  if(a==='skiprest'){ stopTimer(); W.step='ex'; render(); return; }
+  if(a==='skipex'){ nextEx(); return; }
+  if(a==='tofinish'){ W.step='finish'; render(); window.scrollTo(0,0); return; }
+  if(a==='save'){
+    if(!W.feel){ toast('Отметьте, как далась тренировка'); return; }
+    if(!state.startDate) state.startDate=todayStr();
+    var entry={date:todayStr(),kind:'workout',feel:W.feel,done:W.done}; if(W.bp) entry.bp=W.bp;
+    state.sessions.push(entry); W=null; tab='home'; render(); window.scrollTo(0,0); toast('Сохранено в дневник'); return persist();
+  }
+  if(a==='logbp'){
+    var s2=num('ls'), d2=num('ld'), p2=num('lp');
+    if(s2==null||d2==null){ toast('Введите верхнее и нижнее давление'); return; }
+    state.sessions.push({date:todayStr(),kind:'bp',bp:{s:s2,d:d2,p:p2}}); render(); toast('Давление записано'); return persist();
+  }
+}
+
+render();
+requestAnimationFrame(loop);
+})();
+</script>
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function () {
+    navigator.serviceWorker.register('./sw.js').catch(function () {});
+  });
+}
+</script>
+</body>
+</html>
