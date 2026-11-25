@@ -71,6 +71,10 @@ li{margin:4px 0}
 .entry{border-bottom:1px solid var(--line);padding:10px 0}
 .entry:last-child{border-bottom:0}
 .toast{position:fixed;left:50%;bottom:84px;transform:translateX(-50%);background:var(--ink);color:#fff;padding:10px 16px;border-radius:12px;font-size:14px;z-index:9;max-width:90%}
+.flash{position:fixed;inset:0;display:grid;place-items:center;background:rgba(28,26,24,.72);color:#fff;font:800 clamp(26px,7vw,44px) 'Manrope',sans-serif;z-index:20;pointer-events:none;opacity:1;transition:opacity .5s}
+.flash.out{opacity:0}
+.wchart{width:100%;height:64px;display:block}
+.wchart polyline{fill:none;stroke:#3d7a6e;stroke-width:2.5;stroke-linejoin:round;stroke-linecap:round}
 .top{display:flex;justify-content:space-between;align-items:center}
 .ex-list .item{display:flex;gap:12px;align-items:center;padding:8px 0;border-bottom:1px solid var(--line)}
 .ex-list .item:last-child{border-bottom:0}
@@ -161,11 +165,38 @@ var POSES = {
   B:{h:[150,73],s:[134,83],e:[140,96],a:[146,106],p:[89,128],k:[65,154],f:[40,180],t:[52,183]}}
 };
 
+/* ---------- заминка ---------- */
+var COOL = [
+ {name:'Спокойная ходьба', sec:120,
+  how:['Ходите по комнате в обычном темпе, руки свободно опущены.',
+       'Дышите носом, ровно и спокойно — не задерживайте дыхание.',
+       'Через 5 минут после тренировки можно измерить давление: так видно, как оно отреагировало.'],
+  note:'Цель — не устать, а дать пульсу спокойно опуститься.'},
+ {name:'Растяжка груди в дверном проёме', sec:20,
+  how:['Встаньте в проёме открытой двери, ноги на ширине плеч.',
+       'Согните руки в локтях примерно под 90° и поставьте предплечья на косяки — как будто опираетесь на них.',
+       'Сделайте небольшой шаг вперёд, пока в груди не появится мягкое натяжение. Спина прямая, плечи вниз.',
+       'Стойте 20 секунд, дышите ровно. Затем шагните назад и опустите руки.'],
+  note:'Тянуть нужно мягко: если больно в плече или резко тянет — уменьшите шаг. Колени чуть мягкие.'},
+ {name:'Растяжка задней поверхности бедра', sec:20,
+  how:['Поставьте пятку одной ноги на низкую опору: ступеньку, табурет или край дивана. Нога почти прямая, носок на себя.',
+       'Второй ногой стойте уверенно на полу.',
+       'Наклоните корпус вперёд с прямой спиной и тянитесь руками к носку, пока не почувствуете натяжение под коленом.',
+       'Держите 20 секунд, потом поменяйте ноги и повторите.'],
+  note:'Не круглите спину и не пружиньте. Чем выше опора, тем сильнее натяжение — берите невысокую.'},
+ {name:'Растяжка икр у стены', sec:20,
+  how:['Встаньте лицом к стене, ладони на стене на уровне груди.',
+       'Одну ногу отведите на шаг назад, пятка этой ноги стоит на полу и не отрывается.',
+       'Согните переднюю ногу и медленно подайте корпус к стене — почувствуете натяжение в икре задней ноги.',
+       'Держите 20 секунд, затем поменяйте ноги.'],
+  note:'Главное — пятка задней ноги на полу. Если она поднимается, растяжки не будет.'}
+];
+
 /* ---------- состояние ---------- */
 var state;
 try { state = JSON.parse(document.getElementById('state').textContent); } catch(e){ state = {v:1,startDate:null,levels:{},sessions:[],savedAt:0}; }
 try { var loc = JSON.parse(localStorage.getItem(KEY)||'null'); if (loc && loc.savedAt > (state.savedAt||0)) state = loc; } catch(e){}
-state.levels = state.levels || {}; state.sessions = state.sessions || [];
+state.levels = state.levels || {}; state.sessions = state.sessions || []; state.weights = state.weights || [];
 
 var artP = Promise.resolve(null);
 try { if (window.claude && typeof window.claude.use === 'function') artP = window.claude.use('artifact').catch(function(){return null;}); } catch(e){}
@@ -241,7 +272,31 @@ function loop(ts){ document.querySelectorAll('svg.fig').forEach(function(s){draw
 /* ---------- звук ---------- */
 var actx=null;
 function unlockAudio(){ try{ actx = actx || new (window.AudioContext||window.webkitAudioContext)(); if(actx.state==='suspended') actx.resume(); }catch(e){} }
-function beep(n){ try{ if(!actx) return; for(var i=0;i<(n||2);i++){ var o=actx.createOscillator(), g=actx.createGain(), t0=actx.currentTime+i*0.32; o.frequency.value=880; o.connect(g); g.connect(actx.destination); g.gain.setValueAtTime(0.25,t0); g.gain.exponentialRampToValueAtTime(0.001,t0+0.28); o.start(t0); o.stop(t0+0.3);} }catch(e){} try{navigator.vibrate && navigator.vibrate([200,100,200]);}catch(e){} }
+function beep(n){
+  try{
+    if(!actx) return;
+    var tones=[880,1046,880];
+    for(var i=0;i<(n||3);i++){
+      var o=actx.createOscillator(), g=actx.createGain(), t0=actx.currentTime+i*0.42;
+      o.type='sine'; o.frequency.value=tones[i%tones.length];
+      o.connect(g); g.connect(actx.destination);
+      g.gain.setValueAtTime(0.0001,t0);
+      g.gain.exponentialRampToValueAtTime(0.5,t0+0.02);
+      g.gain.exponentialRampToValueAtTime(0.001,t0+0.38);
+      o.start(t0); o.stop(t0+0.4);
+    }
+  }catch(e){}
+  try{ navigator.vibrate && navigator.vibrate([260,120,260]); }catch(e){}
+  flash('Время вышло');
+}
+function flash(text){
+  try{
+    var f=document.createElement('div'); f.className='flash'; f.textContent=text;
+    document.body.appendChild(f);
+    setTimeout(function(){ f.classList.add('out'); },1400);
+    setTimeout(function(){ f.remove(); },2000);
+  }catch(e){}
+}
 
 /* ---------- навигация ---------- */
 var tab='home', W=null, timer=null, restSec=90;
@@ -288,7 +343,7 @@ function homeHTML(){
 }
 
 /* ---------- тренировка ---------- */
-function startWorkout(){ unlockAudio(); W={step:'bp', i:0, set:1, bp:null, feel:null, done:{}}; render(); window.scrollTo(0,0); }
+function startWorkout(){ unlockAudio(); W={step:'bp', i:0, set:1, bp:null, feel:null, done:{}, cool:0}; render(); window.scrollTo(0,0); }
 function bpLevel(s,d){ if(s>=180||d>=110) return 'bad'; if(s>=160||d>=100) return 'warn'; return 'ok'; }
 
 function workoutHTML(){
@@ -319,11 +374,24 @@ function workoutHTML(){
     }
   }
   else if (W.step==='cool'){
-    h+='<h1>Заминка · 5 минут</h1><div class="card"><ol><li>Спокойная ходьба по комнате — 2 минуты</li><li>Растяжка груди в дверном проёме — 20 секунд</li><li>Растяжка задней поверхности бедра: пятка на низкой опоре, лёгкий наклон — по 20 секунд</li><li>Растяжка икр у стены — по 20 секунд</li></ol><p class="mute">Вставайте и меняйте положение медленно, без резких движений.</p><button class="btn" data-act="tofinish">Готово</button></div>';
+    var ci = W.cool||0, c = COOL[ci];
+    h+='<div class="mute">Заминка: шаг '+(ci+1)+' из '+COOL.length+'</div><h1>'+c.name+'</h1>';
+    h+='<div class="card"><div class="big" id="clock">'+fmtSec(c.sec)+'</div><button class="btn teal" data-act="cooltimer">Запустить таймер</button>';
+    h+='<button class="btn" data-act="coolnext">'+(ci<COOL.length-1?'Дальше →':'Готово')+'</button></div>';
+    h+='<div class="card"><h3>Как делать</h3><ol>'+c.how.map(function(x){return '<li>'+x+'</li>';}).join('')+'</ol>';
+    if(c.note) h+='<div class="note info" style="margin-bottom:0">'+c.note+'</div>';
+    h+='</div>';
   }
   else if (W.step==='finish'){
     h+='<h1>Тренировка сделана 💪</h1><div class="card"><h3>Как далась?</h3><div class="feel">'+[['easy','Легко'],['ok','Нормально'],['hard','Тяжело']].map(function(f){return '<button data-feel="'+f[0]+'" class="'+(W.feel===f[0]?'on':'')+'">'+f[1]+'</button>';}).join('')+'</div>';
-    h+='<button class="btn" data-act="save">Сохранить в дневник</button></div>';
+    if(W.bpAfter){
+      h+='<div class="note ok">Давление после: '+W.bpAfter.s+'/'+W.bpAfter.d+(W.bpAfter.p?' · пульс '+W.bpAfter.p:'')+'</div>';
+    } else {
+      h+='<h3 style="margin-top:18px">Давление после <span class="mute">(необязательно)</span></h3><p class="mute">Полезно измерить через 5–10 минут отдыха: видно, как тренировка влияет на давление.</p><div class="fields">';
+      h+='<label class="f">Верхнее<input type="number" inputmode="numeric" id="as" placeholder="130"></label><label class="f">Нижнее<input type="number" inputmode="numeric" id="ad" placeholder="85"></label><label class="f">Пульс<input type="number" inputmode="numeric" id="ap" placeholder="80"></label></div>';
+      h+='<button class="btn teal" data-act="bpafter">Записать давление после</button>';
+    }
+    h+='<button class="btn" data-act="save" style="margin-top:14px">Сохранить в дневник</button></div>';
     h+='<div class="note info">Лёгкая боль в мышцах завтра — нормально. Боль в суставах — повод взять уровень полегче.</div>';
   }
   return h;
@@ -355,8 +423,32 @@ function libHTML(){
 }
 
 /* ---------- дневник ---------- */
+function weightChart(){
+  var w=state.weights.slice(-20);
+  if(w.length<2) return '';
+  var min=Math.min.apply(null,w.map(function(x){return x.kg;})), max=Math.max.apply(null,w.map(function(x){return x.kg;}));
+  if(max-min<1) { max=min+1; }
+  var pts=w.map(function(x,i){
+    var px = w.length===1 ? 50 : (i/(w.length-1))*100;
+    var py = 60 - ((x.kg-min)/(max-min))*50;
+    return px.toFixed(1)+','+py.toFixed(1);
+  }).join(' ');
+  return '<svg class="wchart" viewBox="0 0 100 64" preserveAspectRatio="none"><polyline points="'+pts+'"/></svg>';
+}
 function logHTML(){
   var h='<h1>Дневник</h1><div class="card"><h3>Записать давление</h3><div class="fields"><label class="f">Верхнее<input type="number" inputmode="numeric" id="ls"></label><label class="f">Нижнее<input type="number" inputmode="numeric" id="ld"></label><label class="f">Пульс<input type="number" inputmode="numeric" id="lp"></label></div><button class="btn teal" data-act="logbp">Сохранить</button></div>';
+  h+='<div class="card"><h3>Записать вес</h3><div class="fields"><label class="f">Вес, кг<input type="number" inputmode="decimal" id="lw" placeholder="92,5"></label></div><button class="btn teal" data-act="logweight">Сохранить вес</button>';
+  if(state.weights.length){
+    var last=state.weights[state.weights.length-1], prev=state.weights.length>1?state.weights[state.weights.length-2]:null;
+    var delta=prev?(last.kg-prev.kg):0;
+    h+='<p class="mute" style="margin:14px 0 4px">Сейчас: <b>'+last.kg+' кг</b>'+(prev?(' · с прошлого раза '+(delta>0?'+':'')+delta.toFixed(1)+' кг'):'')+'</p>';
+    h+=weightChart();
+    var tail=state.weights.slice(-6).reverse();
+    h+='<div class="mute" style="margin-top:8px">'+tail.map(function(x){return fmtDate(x.date)+' — '+x.kg+' кг';}).join('<br>')+'</div>';
+  } else {
+    h+='<p class="mute" style="margin:14px 0 0">Записывайте вес раз в неделю в одно и то же время — так видна динамика.</p>';
+  }
+  h+='</div>';
   var list=state.sessions.slice().reverse();
   h+='<div class="card">';
   if(!list.length) h+='<p class="mute">Пока пусто. Здесь появятся тренировки, прогулки и давление.</p>';
@@ -364,7 +456,8 @@ function logHTML(){
   list.forEach(function(s,idx){
     var realIdx = state.sessions.length-1-idx;
     h+='<div class="entry"><div class="row"><b class="grow">'+fmtDate(s.date)+' · '+names[s.kind]+'</b>'+(s.feel?'<span class="pill">'+feels[s.feel]+'</span>':'')+'</div>';
-    if(s.bp) h+='<div class="mute">Давление '+s.bp.s+'/'+s.bp.d+(s.bp.p?' · пульс '+s.bp.p:'')+'</div>';
+    if(s.bp) h+='<div class="mute">Давление до: '+s.bp.s+'/'+s.bp.d+(s.bp.p?' · пульс '+s.bp.p:'')+'</div>';
+    if(s.bpAfter) h+='<div class="mute">Давление после: '+s.bpAfter.s+'/'+s.bpAfter.d+(s.bpAfter.p?' · пульс '+s.bpAfter.p:'')+'</div>';
     if(s.kind==='workout'){ var c=0; for(var k in s.done) c+=s.done[k]; h+='<div class="mute">Подходов: '+c+'</div>'; }
     h+='<button class="link" data-del="'+realIdx+'">удалить</button></div>';
   });
@@ -421,10 +514,24 @@ function act(a, b){
   if(a==='skiprest'){ stopTimer(); W.step='ex'; render(); return; }
   if(a==='skipex'){ nextEx(); return; }
   if(a==='tofinish'){ W.step='finish'; render(); window.scrollTo(0,0); return; }
+  if(a==='cooltimer'){ unlockAudio(); var cc=COOL[W.cool||0]; countdown(cc.sec); b.style.display='none'; return; }
+  if(a==='coolnext'){ stopTimer(); if((W.cool||0) < COOL.length-1){ W.cool=(W.cool||0)+1; render(); window.scrollTo(0,0); } else { W.step='finish'; render(); window.scrollTo(0,0); } return; }
+  if(a==='bpafter'){
+    var as=num('as'), ad=num('ad'), ap=num('ap');
+    if(as==null||ad==null){ toast('Введите верхнее и нижнее давление'); return; }
+    W.bpAfter={s:as,d:ad,p:ap}; render(); toast('Давление после записано'); return;
+  }
+  if(a==='logweight'){
+    var raw=document.getElementById('lw'); var val=raw?String(raw.value).replace(',','.'):'';
+    var kg=parseFloat(val);
+    if(isNaN(kg)||kg<30||kg>300){ toast('Введите вес в килограммах, например 92,5'); return; }
+    state.weights.push({date:todayStr(),kg:Math.round(kg*10)/10});
+    render(); toast('Вес записан'); return persist();
+  }
   if(a==='save'){
     if(!W.feel){ toast('Отметьте, как далась тренировка'); return; }
     if(!state.startDate) state.startDate=todayStr();
-    var entry={date:todayStr(),kind:'workout',feel:W.feel,done:W.done}; if(W.bp) entry.bp=W.bp;
+    var entry={date:todayStr(),kind:'workout',feel:W.feel,done:W.done}; if(W.bp) entry.bp=W.bp; if(W.bpAfter) entry.bpAfter=W.bpAfter;
     state.sessions.push(entry); W=null; tab='home'; render(); window.scrollTo(0,0); toast('Сохранено в дневник'); return persist();
   }
   if(a==='logbp'){

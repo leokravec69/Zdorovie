@@ -1,6 +1,6 @@
 /* Сервис-воркер «Силовые дома».
    При изменении приложения увеличьте VERSION — старый кэш удалится. */
-const VERSION = 'v2';
+const VERSION = 'v3';
 const CACHE = 'silovye-doma-' + VERSION;
 
 const PRECACHE = [
